@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5, user-scalable=yes">
+  <meta name="description" content="Shorten long URLs instantly and generate QR codes for any link. Create professional resumes. Fast, free, and beautiful.">
+  <title>LinkForge — URL Shortener, QR Code & Resume Builder</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Alternative: Use minified CSS for better performance: href="styles.min.css" -->
+  <meta name="theme-color" content="#0a0a1a">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- PDF Library for Resume Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body role="application" aria-label="LinkForge - URL Shortener, QR Code Generator, and Resume Builder">
+
+  <!-- Rotating Galaxy Planets -->
+  <div class="galaxy-container">
+    <div class="planet earth" style="--planet-size: 80px; --distance: 150px; --duration: 20s; --rotation: 0deg;"></div>
+    <div class="planet mars" style="--planet-size: 60px; --distance: 250px; --duration: 30s; --rotation: 120deg;"></div>
+    <div class="planet jupiter" style="--planet-size: 100px; --distance: 350px; --duration: 45s; --rotation: 240deg;"></div>
+    <div class="planet saturn" style="--planet-size: 90px; --distance: 450px; --duration: 60s; --rotation: 180deg;"></div>
+    <div class="planet venus" style="--planet-size: 70px; --distance: 200px; --duration: 25s; --rotation: 60deg;"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <a class="navbar-brand" data-page="home">
+      <div class="brand-icon">🔨</div>
+      LinkForge
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links" id="navLinks">
+      <li><a class="nav-link active" data-page="home">Home</a></li>
+      <li><a class="nav-link" data-page="shorten">Link Forge</a></li>
+      <li><a class="nav-link" data-page="qrcode">QR Code</a></li>
+      <li><a class="nav-link" data-page="resume">Resume Builder</a></li>
+      <li><a class="nav-link" data-page="about">About</a></li>
+      <li><a class="nav-link" data-page="contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Home Page -->
+      <div class="page active" id="page-home">
+        <section class="page-header slide-up">
+          <h1>Forge Your Digital<br><span class="gradient-text">Presence & Success</span></h1>
+          <p>Shorten URLs, generate QR codes, and craft professional resumes — all in one powerful platform.</p>
+        </section>
+
+        <section class="features-grid slide-up">
+          <div class="feature-card" data-page="shorten" style="cursor: pointer;">
+            <div class="card-icon purple">🔗</div>
+            <h3>Link Forge</h3>
+            <p>Paste any long URL and forge a short, shareable link instantly. Keep track of all your links in one place.</p>
+            <span>Forge a Link →</span>
+          </div>
+
+          <div class="feature-card" data-page="qrcode" style="cursor: pointer;">
+            <div class="card-icon cyan">📱</div>
+            <h3>QR Code Generator</h3>
+            <p>Generate beautiful QR codes for any URL or text. Download as PNG and share anywhere — digitally or in print.</p>
+            <span>Generate a QR Code →</span>
+          </div>
+
+          <div class="feature-card" data-page="resume" style="cursor: pointer;">
+            <div class="card-icon purple">📄</div>
+            <h3>Resume Builder</h3>
+            <p>Create a professional resume by filling out a simple form or using LaTeX code. Generate, download, and share.</p>
+            <span>Build Your Resume →</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- Shorten Page -->
+      <div class="page" id="page-shorten">
+        <section class="page-header slide-up">
+          <h1><span class="gradient-text">Link Forge</span></h1>
+          <p>Paste a long URL below and forge a short, clean link instantly.</p>
+        </section>
+
+        <div class="glass-card slide-up">
+          <div class="input-group">
+            <input
+              type="url"
+              id="urlInput"
+              placeholder="https://example.com/your-very-long-url..."
+              autocomplete="off"
+              spellcheck="false"
+            >
+            <button class="btn btn-primary" id="shortenBtn">
+              ✂️ Shorten
+            </button>
+          </div>
+
+          <div class="result-box" id="resultBox">
+            <div class="result-label">Your Shortened Link</div>
+            <div class="result-url">
+              <a href="#" id="resultLink" target="_blank"></a>
+              <button class="btn-icon" id="copyBtn" title="Copy to clipboard">📋</button>
+            </div>
+          </div>
+        </div>
+
+        <section class="history-section slide-up">
+          <h3>📜 Recent Links</h3>
+          <div id="historyList" class="history-list"></div>
+        </section>
+      </div>
+
+      <!-- QR Code Page -->
+      <div class="page" id="page-qrcode">
+        <section class="page-header slide-up">
+          <h1><span class="gradient-text">Generate QR Code</span></h1>
+          <p>Enter any URL or text below and generate a scannable QR code instantly.</p>
+        </section>
+
+        <div class="glass-card slide-up">
+          <div class="input-group">
+            <input
+              type="text"
+              id="qrInput"
+              placeholder="https://example.com or any text..."
+              autocomplete="off"
+              spellcheck="false"
+            >
+            <button class="btn btn-primary" id="generateBtn">
+              📱 Generate
+            </button>
+          </div>
+
+          <div class="qr-output" id="qrOutput">
+            <div class="qr-canvas-wrapper">
+              <!-- qrcodejs appends its own internal canvas/svg into this container -->
+              <div id="qrCanvas"></div>
+            </div>
+            <div class="qr-actions">
+              <button class="btn btn-primary" id="downloadBtn">⬇️ Download PNG</button>
+              <button class="btn btn-secondary" id="copyQrTextBtn">📋 Copy URL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Page -->
+      <div class="page" id="page-about">
+        <section class="page-header slide-up">
+          <h1>About <span class="gradient-text">Navneet Gupta</span></h1>
+          <p>💻 Full Stack Developer | 🚀 Problem Solver | 📊 Data Enthusiast</p>
+          <p style="margin-top: 0.5rem; font-size: 0.95rem; opacity: 0.9;">Passionate about building scalable applications & transforming data into actionable insights</p>
+        </section>
+
+        <!-- About Section -->
+        <div class="about-section slide-up">
+          <div class="about-grid">
+            <!-- Profile Card -->
+            <div class="profile-card glass-card">
+              <div class="profile-header">
+                <div class="profile-avatar">NG</div>
+                <h2>Navneet Gupta</h2>
+                <p class="role">Full Stack Developer (MERN Stack)</p>
+                <div class="social-links">
+                  <a href="https://www.linkedin.com/in/navneet-gupta-4a1644297" class="social-link" title="LinkedIn" target="_blank">💼</a>
+                  <a href="https://github.com/Navneetgupta440" class="social-link" title="GitHub" target="_blank">🐙</a>
+                  <a href="mailto:indianavneetgupta33@gmail.com" class="social-link" title="Email">✉️</a>
+                  <a href="tel:+917317567350" class="social-link" title="Phone">📱</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bio Card -->
+            <div class="bio-card glass-card">
+              <h3>About Me</h3>
+              <p>I'm a passionate Full Stack Developer and Data Analytics enthusiast with a strong foundation in Computer Science. I specialize in building scalable web applications using the MERN stack and Java, with expertise in converting complex data into meaningful insights.</p>
+              <p>I have a proven track record of delivering production-ready applications, implementing efficient algorithms, and solving real-world problems through code. I'm committed to writing clean, maintainable code and continuously improving my skills in backend development, Java frameworks, and system design.</p>
+              
+              <h4>Technical Skills</h4>
+              <div style="margin-top: 1rem;">
+                <h5 style="margin: 0.5rem 0; font-size: 0.9rem; opacity: 0.8;">Frontend</h5>
+                <div class="skills-grid">
+                  <span class="skill-tag">HTML5</span>
+                  <span class="skill-tag">CSS3</span>
+                  <span class="skill-tag">JavaScript</span>
+                  <span class="skill-tag">React</span>
+                </div>
+                <h5 style="margin: 0.8rem 0 0.5rem 0; font-size: 0.9rem; opacity: 0.8;">Backend</h5>
+                <div class="skills-grid">
+                  <span class="skill-tag">Node.js</span>
+                  <span class="skill-tag">Express</span>
+                  <span class="skill-tag">MongoDB</span>
+                  <span class="skill-tag">Java</span>
+                </div>
+                <h5 style="margin: 0.8rem 0 0.5rem 0; font-size: 0.9rem; opacity: 0.8;">Data & Tools</h5>
+                <div class="skills-grid">
+                  <span class="skill-tag">Python</span>
+                  <span class="skill-tag">SQL</span>
+                  <span class="skill-tag">Power BI</span>
+                  <span class="skill-tag">MS Excel</span>
+                </div>
+                <h5 style="margin: 0.8rem 0 0.5rem 0; font-size: 0.9rem; opacity: 0.8;">Developer Tools</h5>
+                <div class="skills-grid">
+                  <span class="skill-tag">Git/GitHub</span>
+                  <span class="skill-tag">REST APIs</span>
+                  <span class="skill-tag">VS Code</span>
+                  <span class="skill-tag">Netlify</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Experience Section -->
+          <div class="experience-section glass-card slide-up">
+            <h3>Experience & Education</h3>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <h4>Internship - Full Stack Development</h4>
+                  <p class="company">Bharat Intern | 2024-2025</p>
+                  <ul class="achievements">
+                    <li>Developed production-ready full stack applications using MERN stack</li>
+                    <li>Built Money Tracker Web App with real-time financial tracking and analytics</li>
+                    <li>Architected scalable backend systems with RESTful APIs and authentication</li>
+                    <li>Optimized database schemas achieving 40% performance improvement</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <h4>Deep Learning Projects</h4>
+                  <p class="company">Personal Projects | 2024</p>
+                  <ul class="achievements">
+                    <li>Built and deployed Pneumonia Detection system using deep learning</li>
+                    <li>Medical image classification achieving high accuracy in real-time inference</li>
+                    <li>Implemented using TensorFlow and medical image processing techniques</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <h4>B.Tech in Computer Science & Engineering</h4>
+                  <p class="company">Accurate College | Currently Pursuing | 2023 - Present</p>
+                  <ul class="achievements">
+                    <li>Strong foundation in Data Structures, Algorithms, and modern development</li>
+                    <li>Focus on problem-solving and system design principles</li>
+                    <li>Location: Greater Delhi Area</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Achievements Section -->
+          <div class="achievements-section glass-card slide-up">
+            <h3>🏆 Achievements & Highlights</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+              <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(110, 100, 255, 0.1)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(124, 58, 237, 0.2); text-align: center;">
+                <p style="font-size: 2rem; margin: 0;">200+</p>
+                <p style="margin: 0.5rem 0 0; font-weight: 600; font-size: 0.95rem;">Problems Solved</p>
+                <p style="margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.8;">LeetCode & GeeksforGeeks</p>
+              </div>
+              <div style="background: linear-gradient(135deg, rgba(110, 100, 255, 0.15), rgba(124, 58, 237, 0.1)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(110, 100, 255, 0.2); text-align: center;">
+                <p style="font-size: 2rem; margin: 0;">40%</p>
+                <p style="margin: 0.5rem 0 0; font-weight: 600; font-size: 0.95rem;">Performance Boost</p>
+                <p style="margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.8;">Database Optimization</p>
+              </div>
+              <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(110, 100, 255, 0.1)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(124, 58, 237, 0.2); text-align: center;">
+                <p style="font-size: 2rem; margin: 0;">95+</p>
+                <p style="margin: 0.5rem 0 0; font-weight: 600; font-size: 0.95rem;">Lighthouse Score</p>
+                <p style="margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.8;">Performance Rating</p>
+              </div>
+              <div style="background: linear-gradient(135deg, rgba(110, 100, 255, 0.15), rgba(124, 58, 237, 0.1)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(110, 100, 255, 0.2); text-align: center;">
+                <p style="font-size: 2rem; margin: 0;">6+</p>
+                <p style="margin: 0.5rem 0 0; font-weight: 600; font-size: 0.95rem;">Projects Deployed</p>
+                <p style="margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.8;">Production Ready</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Projects Section -->
+          <div class="projects-section glass-card slide-up">
+            <h3>📂 Featured Projects</h3>
+            <div style="display: grid; gap: 1.5rem; margin-top: 1.5rem;">
+              <div style="border-left: 4px solid var(--accent-primary); padding-left: 1.2rem; background: rgba(124, 58, 237, 0.05); padding: 1rem; border-radius: 8px;">
+                <h4 style="margin: 0 0 0.3rem 0;">💰 Money Tracker Web App</h4>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin: 0.2rem 0; font-weight: 500;">Full Stack MERN | Production Ready</p>
+                <p style="margin: 0.5rem 0;">Production-ready full stack application enabling efficient income/expense management, real-time financial tracking, and actionable financial insights with secure authentication.</p>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;"><strong>Tech:</strong> React, Node.js, Express, MongoDB, JWT Auth, Chart.js</p>
+              </div>
+              <div style="border-left: 4px solid var(--accent-secondary); padding-left: 1.2rem; background: rgba(110, 100, 255, 0.05); padding: 1rem; border-radius: 8px;">
+                <h4 style="margin: 0 0 0.3rem 0;">🫁 Pneumonia Detection</h4>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin: 0.2rem 0; font-weight: 500;">Deep Learning | AI/ML Model</p>
+                <p style="margin: 0.5rem 0;">Medical image classifier using deep learning for pneumonia detection from Chest X-ray images. Deployed for real-time inference with high accuracy in identifying pneumonia patterns.</p>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;"><strong>Tech:</strong> Python, TensorFlow, CNNs, Medical Image Processing, HuggingFace</p>
+              </div>
+              <div style="border-left: 4px solid var(--accent-primary); padding-left: 1.2rem; background: rgba(124, 58, 237, 0.05); padding: 1rem; border-radius: 8px;">
+                <h4 style="margin: 0 0 0.3rem 0;">📝 Blog Website Platform</h4>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin: 0.2rem 0; font-weight: 500;">Backend | RESTful API</p>
+                <p style="margin: 0.5rem 0;">Dynamic blogging platform with RESTful API infrastructure, secure authentication, robust post management with CRUD operations, commenting capabilities, and mobile-first responsive design.</p>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;"><strong>Tech:</strong> Node.js, Express.js, MongoDB, JWT, Postman</p>
+              </div>
+              <div style="border-left: 4px solid var(--accent-secondary); padding-left: 1.2rem; background: rgba(110, 100, 255, 0.05); padding: 1rem; border-radius: 8px;">
+                <h4 style="margin: 0 0 0.3rem 0;">📱 QR Code Generator</h4>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin: 0.2rem 0; font-weight: 500;">Frontend | Interactive Tool</p>
+                <p style="margin: 0.5rem 0;">Dynamic QR code generator that converts text or URLs into scannable QR codes with instant rendering, comprehensive input validation, and PNG download functionality.</p>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;"><strong>Tech:</strong> JavaScript, HTML5, CSS3, QR Library API, Canvas API</p>
+              </div>
+              <div style="border-left: 4px solid var(--accent-primary); padding-left: 1.2rem; background: rgba(124, 58, 237, 0.05); padding: 1rem; border-radius: 8px;">
+                <h4 style="margin: 0 0 0.3rem 0;">♛ N-Queen Visualizer</h4>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin: 0.2rem 0; font-weight: 500;">Algorithm Visualization | DSA</p>
+                <p style="margin: 0.5rem 0;">Interactive visualization tool for the N-Queens problem demonstrating backtracking algorithm in real-time. Visualizes solution exploration on N × N chessboard with step-by-step animation.</p>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;"><strong>Tech:</strong> JavaScript, Data Structures, Backtracking Algorithm, Canvas</p>
+              </div>
+              <div style="border-left: 4px solid var(--accent-secondary); padding-left: 1.2rem; background: rgba(110, 100, 255, 0.05); padding: 1rem; border-radius: 8px;">
+                <h4 style="margin: 0 0 0.3rem 0;">📇 Contact Management System</h4>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin: 0.2rem 0; font-weight: 500;">Backend | CLI Application</p>
+                <p style="margin: 0.5rem 0;">Contact management application with complete CRUD operations, efficient search algorithms, intuitive CLI interface, and robust input validation for seamless contact organization.</p>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;"><strong>Tech:</strong> Python, CLI, Data Structures, File I/O, Algorithms</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Certifications Section -->
+          <div class="certifications-section glass-card slide-up">
+            <h3>🎓 Certifications & Training</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+              <div style="padding: 1.5rem; border-radius: 12px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(110, 100, 255, 0.08)); border: 1px solid rgba(124, 58, 237, 0.15);">
+                <h4 style="margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">💻 Full Stack Development Certification</h4>
+                <p style="margin: 0.3rem 0; font-size: 0.9rem; opacity: 0.8;"><strong>Proficiency:</strong> Advanced</p>
+                <p style="margin: 0.3rem 0; font-size: 0.85rem; opacity: 0.7;">Comprehensive MERN stack training with hands-on projects and deployment practices</p>
+              </div>
+              <div style="padding: 1.5rem; border-radius: 12px; background: linear-gradient(135deg, rgba(110, 100, 255, 0.1), rgba(124, 58, 237, 0.08)); border: 1px solid rgba(110, 100, 255, 0.15);">
+                <h4 style="margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">☕ Java Certified Programmer</h4>
+                <p style="margin: 0.3rem 0; font-size: 0.9rem; opacity: 0.8;"><strong>Proficiency:</strong> Advanced</p>
+                <p style="margin: 0.3rem 0; font-size: 0.85rem; opacity: 0.7;">Advanced OOP, design patterns, and enterprise Java application development</p>
+              </div>
+              <div style="padding: 1.5rem; border-radius: 12px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(110, 100, 255, 0.08)); border: 1px solid rgba(124, 58, 237, 0.15);">
+                <h4 style="margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">📊 Deloitte Data Analytics Simulation</h4>
+                <p style="margin: 0.3rem 0; font-size: 0.9rem; opacity: 0.8;"><strong>Specialization:</strong> Real-world Data Analysis</p>
+                <p style="margin: 0.3rem 0; font-size: 0.85rem; opacity: 0.7;">Real-world data analysis, visualization, and actionable insights generation</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Languages & Additional Info -->
+          <div class="languages-section glass-card slide-up">
+            <h3>🌍 Languages & Other Skills</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+              <div style="padding: 1.5rem; border-radius: 12px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(110, 100, 255, 0.08)); border: 1px solid rgba(124, 58, 237, 0.15);">
+                <p style="margin: 0; font-weight: 600; font-size: 1rem;">🇮🇳 Hindi</p>
+                <p style="margin: 0.5rem 0 0; font-size: 0.9rem; opacity: 0.8;"><strong>Proficiency:</strong> Native</p>
+              </div>
+              <div style="padding: 1.5rem; border-radius: 12px; background: linear-gradient(135deg, rgba(110, 100, 255, 0.12), rgba(124, 58, 237, 0.08)); border: 1px solid rgba(110, 100, 255, 0.15);">
+                <p style="margin: 0; font-weight: 600; font-size: 1rem;">🇬🇧 English</p>
+                <p style="margin: 0.5rem 0 0; font-size: 0.9rem; opacity: 0.8;"><strong>Proficiency:</strong> Intermediate</p>
+              </div>
+            </div>
+            <h4 style="margin: 1.5rem 0 0.8rem 0;">Other Competencies</h4>
+            <div class="skills-grid">
+              <span class="skill-tag">Data Structures</span>
+              <span class="skill-tag">Algorithms</span>
+              <span class="skill-tag">System Design</span>
+              <span class="skill-tag">OOP Concepts</span>
+              <span class="skill-tag">Agile/Scrum</span>
+              <span class="skill-tag">Problem Solving</span>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- Contact Page -->
+      <div class="page" id="page-contact">
+        <section class="page-header slide-up">
+          <h1>Let's <span class="gradient-text">Connect</span></h1>
+          <p>Have an opportunity or want to collaborate? I'd love to hear from you.</p>
+        </section>
+
+        <div class="contact-section slide-up">
+          <div class="contact-grid">
+            <!-- Contact Form -->
+            <div class="contact-form-card glass-card">
+              <h3>Send me a Message</h3>
+              <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                  <label for="contactName">Your Name *</label>
+                  <input
+                    type="text"
+                    id="contactName"
+                    name="name"
+                    placeholder="John Doe"
+                    required
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="contactEmail">Email Address *</label>
+                  <input
+                    type="email"
+                    id="contactEmail"
+                    name="email"
+                    placeholder="john@company.com"
+                    required
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="contactCompany">Company / Organization</label>
+                  <input
+                    type="text"
+                    id="contactCompany"
+                    name="company"
+                    placeholder="Your Company Name"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="contactSubject">Subject *</label>
+                  <select id="contactSubject" name="subject" required>
+                    <option value="">📌 Select a subject...</option>
+                    <option value="web-development">🌐 Web Development</option>
+                    <option value="full-stack-development">🔗 Full Stack Development</option>
+                    <option value="frontend-development">🎨 Frontend Development</option>
+                    <option value="backend-development">⚙️ Backend Development</option>
+                    <option value="data-analytics">📊 Data Analytics & Power BI</option>
+                    <option value="freelance-project">💼 Freelance Project</option>
+                    <option value="job-opportunity">💼 Job Opportunity</option>
+                    <option value="collaboration">🤝 Collaboration</option>
+                    <option value="consultation">📋 Consultation</option>
+                    <option value="training">🎓 Training & Mentoring</option>
+                    <option value="partnership">🤖 Partnership</option>
+                    <option value="other">📝 Other</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="contactMessage">Message *</label>
+                  <textarea
+                    id="contactMessage"
+                    name="message"
+                    placeholder="Tell me about your opportunity or project..."
+                    rows="5"
+                    required
+                  ></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                  📤 Send Message
+                </button>
+                <div class="form-feedback" id="formFeedback"></div>
+              </form>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="contact-info-card glass-card">
+              <h3>Get in Touch</h3>
+              
+              <div class="info-item">
+                <div class="info-icon">✉️</div>
+                <div class="info-content">
+                  <h4>Email</h4>
+                  <p><a href="mailto:indianavneetgupta33@gmail.com">indianavneetgupta33@gmail.com</a></p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">📱</div>
+                <div class="info-content">
+                  <h4>Phone</h4>
+                  <p><a href="tel:+917317567350">+91 7317567350</a></p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">💼</div>
+                <div class="info-content">
+                  <h4>LinkedIn</h4>
+                  <p><a href="https://www.linkedin.com/in/navneet-gupta-4a1644297" target="_blank">linkedin.com/in/navneet-gupta-4a1644297</a></p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">🐙</div>
+                <div class="info-content">
+                  <h4>GitHub</h4>
+                  <p><a href="https://github.com/Navneetgupta440" target="_blank">github.com/Navneetgupta440</a></p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">📍</div>
+                <div class="info-content">
+                  <h4>Location</h4>
+                  <p>Greater Noida, India</p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">🌍</div>
+                <div class="info-content">
+                  <h4>Website</h4>
+                  <p><a href="https://portfolio-ng440.netlify.app/" target="_blank">portfolio-ng440.netlify.app</a></p>
+                </div>
+              </div>
+
+              <div class="response-time">
+                <p>💬 <strong>Let's Work Together</strong> - I'm always interested in hearing about new projects and opportunities!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Call to Action Section -->
+          <div class="cta-section glass-card slide-up" style="text-align: center; padding: 2.5rem; background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(110, 100, 255, 0.08));">
+            <h3 style="font-size: 1.8rem; margin-bottom: 0.8rem;">🚀 Ready to Build Something Awesome?</h3>
+            <p style="margin: 0 0 1.5rem 0; font-size: 1rem; opacity: 0.9;">Whether you have an exciting project, collaboration opportunity, or just want to discuss ideas and technology - I'd love to connect! Let's create something amazing together.</p>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+              <a href="https://linkedin.com/in/navneet-gupta" target="_blank" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">💼 Connect on LinkedIn</a>
+              <a href="https://github.com/navneetgupta440" target="_blank" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">🐙 View GitHub</a>
+              <a href="mailto:indiagupta33@gmail.com" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">📧 Send Email</a>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.7;">⏱️ I typically respond within 24 hours</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUME BUILDER PAGE -->
+<div class="page" id="page-resume">
+  <section class="page-header slide-up">
+    <h1><span class="gradient-text">Resume Builder</span></h1>
+    <p>Create a professional resume by entering your information or using LaTeX code.</p>
+  </section>
+
+  <!-- Mode Selector -->
+  <div class="resume-mode-selector glass-card slide-up">
+    <button class="mode-btn active" data-mode="form">📝 Form Builder</button>
+    <button class="mode-btn" data-mode="latex">⚙️ LaTeX Code</button>
+  </div>
+
+  <div class="container">
+    <div class="resume-builder-wrapper">
+      
+      <!-- FORM BUILDER MODE -->
+      <div class="resume-mode active" id="form-mode">
+        <!-- Enhanced Resume Header with Context -->
+        <div class="resume-header-info">
+          <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="margin: 0 0 0.5rem 0; font-size: 1.5rem;">📄 Build Your Professional Resume</h2>
+              <p style="margin: 0; opacity: 0.8; font-size: 0.95rem;">Complete each section to create a polished, ATS-optimized resume</p>
+            </div>
+            <div style="text-align: right; padding: 0.75rem 1rem; background: rgba(124, 58, 237, 0.15); border-radius: 8px; border-left: 3px solid var(--accent-primary);">
+              <p style="margin: 0; font-weight: 600; font-size: 1rem;"><span id="completionPercentage">0</span>% Complete</p>
+              <small style="opacity: 0.7;"><span id="completedSections">0</span>/8 sections filled</small>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Advanced Form Progress Indicator -->
+        <div class="form-progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 12.5%;"></div>
+        </div>
+        
+        <!-- Advanced Section Tabs with Scroll Navigation & Completion Badges -->
+        <div class="resume-tabs-wrapper glass-card slide-up">
+          <button class="tab-scroll-btn tab-scroll-left" id="tabScrollLeft" style="display: none;">◀</button>
+          <div class="resume-tabs" id="resumeTabsContainer">
+            <button class="tab-btn active" data-tab="personal" title="Full name & contact info" onclick="smoothScrollToSection('personal');">👤 <span class="tab-text">Personal</span><span class="completion-badge" style="display: none;">✓</span></button>
+            <button class="tab-btn" data-tab="experience" title="Work history & positions">💼 <span class="tab-text">Experience</span><span class="completion-badge" style="display: none;">✓</span></button>
+            <button class="tab-btn" data-tab="education" title="Degrees & education">🎓 <span class="tab-text">Education</span><span class="completion-badge" style="display: none;">✓</span></button>
+            <button class="tab-btn" data-tab="skills" title="Technical & soft skills">⭐ <span class="tab-text">Skills</span><span class="completion-badge" style="display: none;">✓</span></button>
+            <button class="tab-btn" data-tab="projects" title="Portfolio & projects">🚀 <span class="tab-text">Projects</span><span class="completion-badge" style="display: none;">✓</span></button>
+            <button class="tab-btn" data-tab="achievements" title="Awards & recognition">🏆 <span class="tab-text">Achievements</span><span class="completion-badge" style="display: none;">✓</span></button>
+            <button class="tab-btn" data-tab="certifications" title="Certifications & credentials">📜 <span class="tab-text">Certs</span><span class="completion-badge" style="display: none;">✓</span></button>
+            <button class="tab-btn" data-tab="languages" title="Languages spoken">🌍 <span class="tab-text">Languages</span><span class="completion-badge" style="display: none;">✓</span></button>
+          </div>
+          <button class="tab-scroll-btn tab-scroll-right" id="tabScrollRight" style="display: none;">▶</button>
+        </div>
+
+        <!-- Personal Information Tab -->
+        <div class="form-section glass-card slide-up tab-content active" data-tab-content="personal">
+          <h3>👤 Personal Information</h3>
+          <div class="section-tip">💡 Pro Tip: Use your professional name as it appears in official documents. Complete this section first!</div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="resumeName" placeholder="John Doe" required>
+              <small class="field-hint">💡 Include middle name if it improves professional appearance</small>
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" id="resumeEmail" placeholder="john@example.com" required>
+              <small class="field-hint">💡 Use professional email (firstname.lastname@domain.com preferred)</small>
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" id="resumePhone" placeholder="+1 (555) 000-0000">
+              <small class="field-hint">💡 Include country code for international applications</small>
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" id="resumeLocation" placeholder="City, Country">
+              <small class="field-hint">💡 Help recruiters understand your job market context</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Professional Summary</label>
+            <textarea id="resumeSummary" placeholder="Brief overview of your professional background..." rows="3"></textarea>
+            <small class="field-hint">💡 Tip: Keep it to 2-3 sentences. Recruiters spend ~6 seconds reading this!</small>
+            <small style="opacity: 0.7; margin-top: 0.5rem; display: block;">📊 Character count: <span id="summaryCount">0</span>/500</small>
+          </div>
+        </div>
+
+        <!-- Experience Section Tab -->
+        <div class="form-section glass-card slide-up tab-content" data-tab-content="experience" style="display: none;">
+          <h3>💼 Work Experience</h3>
+          <div id="experienceContainer"></div>
+          <button class="btn btn-secondary" id="addExperienceBtn">+ Add Experience</button>
+        </div>
+
+        <!-- Education Section Tab -->
+        <div class="form-section glass-card slide-up tab-content" data-tab-content="education" style="display: none;">
+          <h3>🎓 Education</h3>
+          <div id="educationContainer"></div>
+          <button class="btn btn-secondary" id="addEducationBtn">+ Add Education</button>
+        </div>
+
+        <!-- Skills Section Tab -->
+        <div class="form-section glass-card slide-up tab-content" data-tab-content="skills" style="display: none;">
+          <h3>⭐ Skills</h3>
+          <div class="form-group">
+            <label>Skills (comma-separated)</label>
+            <textarea id="resumeSkills" placeholder="JavaScript, React, Python, SQL, HTML, CSS..." rows="3"></textarea>
+            <small style="opacity: 0.7; margin-top: 0.3rem; display: block;">Tip: Press Enter or comma to separate skills</small>
+          </div>
+        </div>
+
+        <!-- Projects Section Tab -->
+        <div class="form-section glass-card slide-up tab-content" data-tab-content="projects" style="display: none;">
+          <h3>🚀 Projects</h3>
+          <div id="projectsContainer"></div>
+          <button class="btn btn-secondary" id="addProjectBtn">+ Add Project</button>
+        </div>
+
+        <!-- Achievements Section Tab -->
+        <div class="form-section glass-card slide-up tab-content" data-tab-content="achievements" style="display: none;">
+          <h3>⭐ Achievements</h3>
+          <div id="achievementsContainer"></div>
+          <button class="btn btn-secondary" id="addAchievementBtn">+ Add Achievement</button>
+        </div>
+
+        <!-- Certifications Section Tab -->
+        <div class="form-section glass-card slide-up tab-content" data-tab-content="certifications" style="display: none;">
+          <h3>🏆 Certifications & Credentials</h3>
+          <div id="certificationsContainer"></div>
+          <button class="btn btn-secondary" id="addCertificationBtn">+ Add Certification</button>
+        </div>
+
+        <!-- Languages Section Tab -->
+        <div class="form-section glass-card slide-up tab-content" data-tab-content="languages" style="display: none;">
+          <h3>🌍 Languages</h3>
+          <div id="languagesContainer"></div>
+          <button class="btn btn-secondary" id="addLanguageBtn">+ Add Language</button>
+        </div>
+
+        <!-- Smart Action Buttons Section -->
+        <div class="resume-actions">
+          <button class="btn btn-secondary" id="scrollToTopBtn" title="Scroll to top" onclick="scrollToTop();">⬆️ Top</button>
+          <button class="btn btn-secondary" id="manualLoadBtn" title="Load a previously saved resume">📂 Load Draft</button>
+          <button class="btn btn-secondary" id="manualSaveBtn" title="Manually save your progress">💾 Save Now</button>
+          <button class="btn btn-primary" id="generateResumeBtn" title="Create and download your resume">📄 Download Resume</button>
+          <button class="btn btn-secondary" id="previewBeforeSaveBtn" title="Preview how it will look" style="display: none;">👁️ Preview</button>
+          <button class="btn btn-secondary" id="clearDraftBtn" title="Clear all data (cannot be undone)">🗑️ Clear</button>
+        </div>
+
+        <!-- File Upload for System Loading -->
+        <input type="file" id="fileUploadInput" accept=".json" style="display: none;">
+
+        <!-- Status Display Bar -->
+        <div class="resume-status-bar">
+          <div><span id="saveStatus" style="font-size: 0.9rem;">💾 Never saved</span></div>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <span id="wordCount" style="font-size: 0.9rem; opacity: 0.7;">📊 Words: 0</span>
+            <span id="estimatedReadTime" style="font-size: 0.9rem; opacity: 0.7;">⏱️ ~0 min read</span>
+          </div>
+        </div>
+
+        <!-- Validation Message -->
+        <div id="validationMessage" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none; font-weight: 500;"></div>
+      </div>
+
+      <!-- LATEX MODE -->
+      <div class="resume-mode" id="latex-mode">
+        <div class="form-section glass-card slide-up">
+          <h3>⚙️ LaTeX Resume Code</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Paste your LaTeX code and click Render to preview. Updates instantly as you type.</p>
+          
+          <div class="form-group">
+            <label>LaTeX Code Input</label>
+            <textarea id="latexCode" placeholder="\documentclass{article}
+\usepackage[utf-8]{inputenc}
+\title{Resume}
+\author{Your Name}
+\begin{document}
+...
+\end{document}" rows="15" style="font-family: 'Courier New', monospace; font-size: 0.9rem;" spellcheck="false"></textarea>
+            <small style="opacity: 0.7; margin-top: 0.3rem; display: block;">💡 Tip: Paste complete LaTeX code and click "Render" button</small>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 1rem; flex-wrap: wrap;">
+            <button class="btn btn-primary" id="renderLatexBtn" style="flex: 1; min-width: 150px;">👁️ Render LaTeX</button>
+            <button class="btn btn-secondary" id="downloadLatexBtn" style="flex: 1; min-width: 150px;">📥 Download .tex</button>
+          </div>
+
+          <div id="latexPreview" class="resume-preview glass-card" style="margin-top: 1.5rem; display: none;">
+            <h4 style="margin-bottom: 1rem; font-weight: 600;">📊 LaTeX Preview:</h4>
+            <div id="latexOutput" style="max-height: 600px; overflow-y: auto;"></div>
+          </div>
+          <div id="latexError" style="margin-top: 1rem; padding: 1rem; background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.3); border-radius: 8px; color: #ff3b30; display: none;"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Resume Preview Panel -->
+    <div class="resume-preview-panel glass-card slide-up">
+      <h3>📋 Preview</h3>
+      <div id="resumePreview" class="resume-preview-content">
+        <p style="text-align: center; color: var(--text-muted);">Click "Generate Resume" to see preview</p>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap;">
+        <button class="btn btn-primary" id="downloadResumeBtn" style="display: none;">
+          📥 Download PDF
+        </button>
+        <button class="btn btn-secondary" id="downloadResumeHtmlBtn" style="display: none;">
+          📄 Download HTML
+        </button>
+        <button class="btn btn-secondary" id="copyResumeBtn" style="display: none;">
+          📋 Copy Text
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATES FOR DYNAMIC ELEMENTS -->
+<template id="experienceTemplate">
+  <div class="experience-item form-section" style="background: rgba(124, 58, 237, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+    <button class="remove-btn" type="button">✕</button>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Job Title *</label>
+        <input type="text" class="experience-title" placeholder="Senior Developer" required>
+      </div>
+      <div class="form-group">
+        <label>Company *</label>
+        <input type="text" class="experience-company" placeholder="Tech Company" required>
+      </div>
+      <div class="form-group">
+        <label>Start Date</label>
+        <input type="month" class="experience-start">
+      </div>
+      <div class="form-group">
+        <label>End Date</label>
+        <input type="month" class="experience-end">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea
+        class="experience-description"
+        placeholder="Key responsibilities and achievements..."
+        rows="2"
+      ></textarea>
+    </div>
+  </div>
+</template>
+
+<template id="educationTemplate">
+  <div class="education-item form-section" style="background: rgba(124, 58, 237, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+    <button class="remove-btn" type="button">✕</button>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>School/University *</label>
+        <input type="text" class="education-school" placeholder="University Name" required>
+      </div>
+      <div class="form-group">
+        <label>Degree *</label>
+        <input type="text" class="education-degree" placeholder="B.Tech in Computer Science" required>
+      </div>
+      <div class="form-group">
+        <label>Graduation Year</label>
+        <input type="number" class="education-year" placeholder="2023" min="1950" max="2100">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Details</label>
+      <textarea class="education-details" placeholder="GPA, honors, relevant coursework..." rows="2"></textarea>
+    </div>
+  </div>
+</template>
+
+<template id="projectTemplate">
+  <div class="project-item form-section" style="background: rgba(110, 100, 255, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+    <button class="remove-btn" type="button">✕</button>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Project Name *</label>
+        <input type="text" class="project-name" placeholder="E-commerce Platform" required>
+      </div>
+      <div class="form-group">
+        <label>Technologies Used *</label>
+        <input type="text" class="project-tech" placeholder="React, Node.js, MongoDB" required>
+      </div>
+      <div class="form-group">
+        <label>Project URL</label>
+        <input type="url" class="project-url" placeholder="https://example.com">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea class="project-description" placeholder="Brief description of the project and your role..." rows="2"></textarea>
+    </div>
+  </div>
+</template>
+
+<template id="achievementTemplate">
+  <div class="achievement-item form-section" style="background: rgba(255, 193, 7, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+    <button class="remove-btn" type="button">✕</button>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Achievement Title *</label>
+        <input type="text" class="achievement-title" placeholder="Won Best Innovation Award" required>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="month" class="achievement-date">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea class="achievement-description" placeholder="Brief description of the achievement..." rows="2"></textarea>
+    </div>
+  </div>
+</template>
+
+<template id="certificationTemplate">
+  <div class="certification-item form-section" style="background: rgba(124, 58, 237, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+    <button class="remove-btn" type="button">✕</button>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Certification Name *</label>
+        <input type="text" class="cert-name" placeholder="AWS Certified Solutions Architect" required>
+      </div>
+      <div class="form-group">
+        <label>Issuing Organization *</label>
+        <input type="text" class="cert-issuer" placeholder="Amazon Web Services" required>
+      </div>
+      <div class="form-group">
+        <label>Issue Date</label>
+        <input type="month" class="cert-date">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Credential ID/URL</label>
+      <input type="text" class="cert-credential" placeholder="e.g., credential link or ID">
+    </div>
+  </div>
+</template>
+
+<template id="languageTemplate">
+  <div class="language-item form-section" style="background: rgba(110, 100, 255, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+    <button class="remove-btn" type="button">✕</button>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Language *</label>
+        <input type="text" class="language-name" placeholder="English" required>
+      </div>
+      <div class="form-group">
+        <label>Proficiency *</label>
+        <select class="language-proficiency" required>
+          <option value="">Select proficiency level...</option>
+          <option value="Native">Native</option>
+          <option value="Fluent">Fluent</option>
+          <option value="Professional">Professional</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Basic">Basic</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</template>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Crafted by Navneet Gupta — LinkForge © 2026</p>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite" aria-hidden="true"></div>
+
+  <!-- Third-party Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  
+  <!-- Core Application Modules (Optimized & Modularized) -->
+  <script src="modules/storage.js" defer></script>
+  <script src="modules/animations.js" defer></script>
+<script src="modules/ui.js" defer></script>
+<script src="modules/resume.js" defer></script>
+<script src="modules/app.js" defer></script>
+</body>
+</html>

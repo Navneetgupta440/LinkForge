@@ -14,7 +14,7 @@
 ### Project Timeline
 - **Start Date:** 21st March 2026
 - **End Date:** 30th March 2026
-ion- **Duration:** 10 days (Intensive Development with 7 Phases)
+- **Duration:** 10 days (Intensive Development with 7 Phases)
 - **Phase 1:** 21/03 (Architecture & Infrastructure Setup)
 - **Phase 2:** 22/03 (Core Tools Development)
 - **Phase 3:** 23/03 - 24/03 (Resume Builder Input Structure)
